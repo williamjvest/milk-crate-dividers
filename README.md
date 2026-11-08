@@ -27,11 +27,10 @@ The files in [`stl/`](stl) are already oriented: channel face down, plug up. The
 
 | Part | File | Each (0.4 nozzle, 0.2 mm, PLA) |
 |---|---|---|
-| Wall clip | [`stl/wall-clip.stl`](stl/wall-clip.stl) | ~40 min, 15 g |
+| Wall clip | [`stl/wall-clip.stl`](stl/wall-clip.stl) | ~33 min, 12 g |
 | Floor insert | [`stl/floor-insert.stl`](stl/floor-insert.stl) | ~30 min, 11 g |
 
-- **Wall clip:** set the bridge angle to 45° (`bridge_angle` in Orca, Bambu Studio and Elegoo Slicer). Its channel ceiling is a cross, and at 45° both arms bridge diagonally instead of one running a long line over air.
-- **Floor insert:** print it as-is. Its two small "ears" carry the plug square up through the body, so nothing prints over air.
+- Print both as-is. Each part's two small "ears" carry the plug square up through the body, so nothing prints over air. The only bridge is the channel ceiling, 5.9 mm across.
 - Six walls or 100% infill makes them stiff. Ours are printed in PLA and PLA-CF on an Elegoo Centauri Carbon.
 
 ## How it fits
@@ -39,8 +38,8 @@ The files in [`stl/`](stl) are already oriented: channel face down, plug up. The
 | | Wall clip | Floor insert |
 |---|---|---|
 | Plug (a square turned 45° to match the crate's diamond holes) | 29.65 mm (1.17") across the flats | 23.4 mm (0.92") for the 23.9 mm floor holes |
-| Channel | 5.9 mm wide x 6 mm deep, a cross | 5.9 mm wide x 6 mm deep, one channel |
-| Body | 50 x 50 mm, 9 mm thick | 50 x 26 mm, 9 mm thick |
+| Channel | 5.9 mm wide x 6 mm deep | 5.9 mm wide x 6 mm deep |
+| Body | 50 x 26 mm, 9 mm thick (42 mm across the ears) | 50 x 26 mm, 9 mm thick (33 mm across the ears) |
 
 | ![Wall clip, channel side](images/wall-clip-top.jpg) | ![Wall clip, plug side](images/wall-clip-underside.jpg) | ![Floor insert, channel side](images/floor-insert-top.jpg) | ![Floor insert, plug side](images/floor-insert-underside.jpg) |
 |---|---|---|---|
@@ -49,6 +48,7 @@ The files in [`stl/`](stl) are already oriented: channel face down, plug up. The
 - **Plug fit:** the floor insert's plug is snug by design. If yours won't go in, sand the flats lightly, or drop `PLUG` by 0.1-0.2 mm in the script.
 - **Channel:** 5.9 mm leaves about 0.3 mm a side for the 1/4" maple. For 6 mm material (Baltic birch, Sintra, BCX pine), set `SLOT_W = 6.5` in both scripts.
 - **Height:** the floor insert lifts the board 3 mm off the crate floor.
+- **Shelves:** the plugs are square, so a wall clip turned 90° holds a horizontal board.
 
 ![Floor insert drawing](images/floor-insert-blueprint.png)
 
@@ -68,8 +68,9 @@ STEP files for other CAD tools are in [`step/`](step).
 
 ## Credits and license
 
-The wall clip is a remix of [Milk Crate Divider by robthewinner](https://www.printables.com/model/34329-milk-crate-divider), licensed CC BY-NC 4.0. This version changes three things:
+The wall clip is a remix of [Milk Crate Divider by robthewinner](https://www.printables.com/model/34329-milk-crate-divider), licensed CC BY-NC 4.0. This version changes four things:
 - It's rebuilt as a parametric script.
+- It has one channel instead of the cross, which saves about 15% of the plastic.
 - The plug is resized for the Juggernaut crate's holes.
 - The channel is narrowed to 5.9 mm for 1/4" plywood.
 

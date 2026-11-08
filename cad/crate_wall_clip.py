@@ -1,81 +1,67 @@
-"""WALL clip for the Juggernaut 24 qt milk crates, rebuilt parametrically.
+"""Single-channel WALL clip for the Juggernaut 24 qt milk crates.
 
-It is milk-crate-divider-wvmodified2.stl with one change, (2026-11-07): the channel is
-5.9 mm wide instead of 6.5. 5.9 is the width that fit his 1/4" maple ply "perfectly" in the floor
-insert's test print 2. The boards are 0.203" (5.16 mm) listed and 5.3-5.4 mm on his caliper, so the
-6.5 mm channel left about a millimetre of slop.
-
-Everything else is wvmodified2's, measured from its STL on 2026-11-07:
-  - a cross of two 26 x 50 mm arms, 9 mm thick;
-  - a cross-shaped channel 6 mm deep, open at the front and at every arm end, with its floor
-    3 mm off the wall and a ~0.8 mm lead-in at the mouth;
-  - the outer edges rounded ~0.8 mm on the wall side and ~0.6 on the channel side;
-  - a square plug 29.65 mm across the flats, 6 mm deep, turned 45 deg so its corners point along
-    the channels. It fits the wall holes.
-wvmodified2's plug and channels sat ~0.4 mm off the centre of its outline (a hand edit in
-Vectorworks). Here everything is concentric.
+It is the floor insert (crate_floor_insert.py) with the wall clip's plug: one channel instead of
+the original cross, because only one channel is ever used and the second arm was waste (2026-11-08).
+  - Plug: 29.65 mm across the flats, 6 mm deep, turned 45 deg so its corners point along and
+    across the channel. That is milk-crate-divider-wvmodified2's plug, proven in the wall holes.
+  - Everything else is the floor insert's: a 26 x 50 mm arm, 9 mm thick, a 5.9 x 6 mm channel with
+    its floor 3 mm off the wall, the same lead-ins.
+  - The plug square runs up through the body to the front face, as on the floor insert. With the
+    cross arm gone, that is what keeps the plug's side corners from printing over air. On this
+    bigger plug those "ears" stick out 8 mm past the arm.
+  - The plug is square, so the clip goes in with the channel vertical (dividers) or turned 90 deg
+    (shelves).
+The cross-channel version it replaces is in this repo's history (commit a304c20).
 
 Frames: CAD frame = use frame. z = 0 on the crate wall (the body's back face), z up into the crate,
-channels along x and y, plug below z = 0. Print orientation is wvmodified2's: channel face down on
-the bed, plug up (`*_print.stl`). Slice with `--set bridge_angle=45` so the cross-shaped channel
-ceiling bridges diagonally (README).
+channel along x, plug below z = 0. Print orientation: channel face down on the bed, plug up
+(`*_print.stl`). The only span over air is the channel ceiling, 5.9 mm across, so no special
+bridge settings.
 
 Run: ~/.venvs/cad/bin/python crate_wall_clip.py
 """
+import math
 from pathlib import Path
 from build123d import Axis, Box, Pos, Rot, chamfer, export_step, export_stl
 
 HERE = Path(__file__).resolve().parent
 NAME = "crate-wall-clip"
 
-# --- parameters (mm) ---------------------------------------------------------------------------
-PLUG = 29.65        # wvmodified2's plug across flats (from its face planes): fits the wall holes
-PLUG_H = 6.0        # wvmodified2's plug depth
-TIP_CHAMFER = 0.6   # lead-in on the plug tip (the floor insert's, which went in tight but fine)
-ARM_W = 26.0        # wvmodified2's arm width
-ARM_L = 50.0        # wvmodified2's arm length (overall 50 x 50)
-BODY_T = 9.0        # wvmodified2's body thickness
-SLOT_W = 5.9        # was 6.5; 5.9 fit the maple ply perfectly in floor insert test 2
-SLOT_D = 6.0        # wvmodified2's channel depth; its floor sits 3 mm off the wall
-LEAD = 0.8          # wvmodified2's mouth lead-in (8.1 wide at the face, 6.5 by 0.9 deep)
-BACK_EDGE = 0.8     # wvmodified2 rounds its wall-side outer edges ~0.8
-FRONT_EDGE = 0.6    # ... and its channel-side outer edges (its face section is ~134 mm2 smaller)
-BOARD_T = 5.3       # 1/4" maple ply, for the fit numbers only
+# --- parameters (mm) ---------------------------------------------------------------------
+PLUG = 29.65        # wvmodified2's plug across flats: fits the Juggernaut's wall holes
+HOLE = 30.0         # wall hole across flats: NOT measured; for the fit numbers only
+PLUG_H = 6.0        # same plug depth as wvmodified2 and the floor insert
+TIP_CHAMFER = 0.6   # lead-in on the plug tip
+ARM_W = 26.0        # arm width (floor insert's, = wvmodified2's arms)
+ARM_L = 50.0        # arm length; its ends land on the wall past the hole's corners
+BODY_T = 9.0        # body thickness, back face to channel face
+SLOT_W = 5.9        # 1/4" maple ply (5.16-5.4 mm): the floor insert's, which fit "perfectly"
+SLOT_D = 6.0        # channel depth
+BASE = BODY_T - SLOT_D   # 3.0: the panel edge sits this far off the wall
+LEAD = 0.6          # lead-in on the channel mouth so the panel drops in
+BOARD_T = 5.3       # 1/4" maple ply as measured; fit numbers only
+CORNER = PLUG / math.sqrt(2)        # plug centre to corner (along and across the channel)
+HOLE_CORNER = HOLE / math.sqrt(2)
 
 
-def build(slot_w=SLOT_W):
-    arms = (Pos(0, 0, BODY_T / 2) * Box(ARM_L, ARM_W, BODY_T)
-            + Pos(0, 0, BODY_T / 2) * Box(ARM_W, ARM_L, BODY_T))
-    plug = Pos(0, 0, -PLUG_H / 2 + 0.25) * Rot(0, 0, 45) * Box(PLUG, PLUG, PLUG_H + 0.5)
-    part = arms + plug
-    zc = BODY_T - SLOT_D / 2 + 0.5
-    part -= Pos(0, 0, zc) * Box(ARM_L + 10, slot_w, SLOT_D + 1)
-    part -= Pos(0, 0, zc) * Box(slot_w, ARM_L + 10, SLOT_D + 1)
+def build():
+    arm = Pos(0, 0, BODY_T / 2) * Box(ARM_L, ARM_W, BODY_T)
+    # plug square turned 45 deg, running from the plug tip up through the body to the front face
+    square = Pos(0, 0, (BODY_T - PLUG_H) / 2) * Rot(0, 0, 45) * Box(PLUG, PLUG, BODY_T + PLUG_H)
+    slot = Pos(0, 0, BODY_T - SLOT_D / 2 + 0.5) * Box(ARM_L + 10, SLOT_W, SLOT_D + 1)
+    part = arm + square - slot
     notes = []
 
     def try_chamfer(p, edges, size, label):
-        if not edges:
-            notes.append(f"chamfer '{label}': no edges found")
-            return p
         try:
             return chamfer(edges, size)
         except Exception as e:  # cosmetic chamfers sometimes fail in OCC; keep building
             notes.append(f"chamfer '{label}' skipped: {e}")
             return p
 
-    ex, ey = part.edges().filter_by(Axis.X), part.edges().filter_by(Axis.Y)
-    mouth = ([e for e in ex if abs(e.center().Z - BODY_T) < 1e-3 and abs(abs(e.center().Y) - slot_w / 2) < 1e-3]
-             + [e for e in ey if abs(e.center().Z - BODY_T) < 1e-3 and abs(abs(e.center().X) - slot_w / 2) < 1e-3])
+    mouth = [e for e in part.edges().filter_by(Axis.X)
+             if abs(e.center().Z - BODY_T) < 1e-3 and abs(abs(e.center().Y) - SLOT_W / 2) < 1e-3]
     part = try_chamfer(part, mouth, LEAD, "channel mouth")
-    ex, ey = part.edges().filter_by(Axis.X), part.edges().filter_by(Axis.Y)
-    outer = (ARM_L / 2, ARM_W / 2)
-    back = ([e for e in ex if abs(e.center().Z) < 1e-3 and min(abs(abs(e.center().Y) - v) for v in outer) < 1e-3]
-            + [e for e in ey if abs(e.center().Z) < 1e-3 and min(abs(abs(e.center().X) - v) for v in outer) < 1e-3])
-    part = try_chamfer(part, back, BACK_EDGE, "back edges")
-    ex, ey = part.edges().filter_by(Axis.X), part.edges().filter_by(Axis.Y)
-    front = ([e for e in ex if abs(e.center().Z - BODY_T) < 1e-3 and min(abs(abs(e.center().Y) - v) for v in outer) < 1e-3]
-             + [e for e in ey if abs(e.center().Z - BODY_T) < 1e-3 and min(abs(abs(e.center().X) - v) for v in outer) < 1e-3])
-    part = try_chamfer(part, front, FRONT_EDGE, "front edges")
     tip = [e for e in part.edges() if abs(e.center().Z + PLUG_H) < 1e-3]
     part = try_chamfer(part, tip, TIP_CHAMFER, "plug tip")
     return part, {"solids": len(part.solids()), "volume_cm3": part.volume / 1000.0, "notes": notes}
@@ -91,16 +77,15 @@ def checks(info, stl_cad, stl_print):
     out["solids (B-rep)"] = info["solids"]
     out["bbox"] = [tuple(round(float(v), 2) for v in m.bounds[:, i]) for i in range(3)]
     mp = trimesh.load(stl_print, force="mesh")
-    out["print min z / max z"] = (round(float(mp.vertices[:, 2].min()), 3), round(float(mp.vertices[:, 2].max()), 3))
-    # channel width read back from the mesh, halfway down the channel, near an arm end
-    s = m.section(plane_origin=(0, 0, BODY_T - SLOT_D / 2), plane_normal=(0, 0, 1))
-    pts = np.vstack([np.asarray(d) for d in s.discrete])
-    ys = pts[(pts[:, 0] > 20) & (pts[:, 0] < 24), 1]
-    inner = np.unique(np.round(ys[np.abs(ys) < 6], 3))
-    out["channel walls (y) read back"] = tuple(inner.tolist())
-    out["board play per side"] = round((SLOT_W - BOARD_T) / 2, 3)
-    out["plug across flats / corner to corner"] = (PLUG, round(PLUG * 2 ** 0.5, 2))
-    out["volume cm3"] = round(info["volume_cm3"], 2)
+    z = mp.vertices[:, 2]
+    out["print min z / max z"] = (round(float(z.min()), 3), round(float(z.max()), 3))
+    out["plug across flats / corner to corner"] = (PLUG, round(2 * CORNER, 2))
+    out["arm past the hole corner (each end, est.)"] = round(ARM_L / 2 - HOLE_CORNER, 2)
+    tri = max(0.0, HOLE_CORNER - ARM_W / 2) ** 2
+    out["landing area on wall (mm2, est.)"] = round(ARM_L * ARM_W - (HOLE ** 2 - 2 * tri), 1)
+    out["ear past arm side (each)"] = round(CORNER - ARM_W / 2, 2)
+    out["board play per side in channel"] = round((SLOT_W - BOARD_T) / 2, 3)
+    out["volume cm3 (cross version: 19.09)"] = round(info["volume_cm3"], 2)
     return out
 
 
@@ -110,8 +95,9 @@ if __name__ == "__main__":
     stl_print = HERE / f"{NAME}_print.stl"
     export_step(part, str(HERE / f"{NAME}.step"))
     export_stl(part, str(stl), tolerance=0.01, angular_tolerance=0.1)
-    export_stl(Pos(0, 0, BODY_T) * Rot(180, 0, 0) * part, str(stl_print), tolerance=0.01, angular_tolerance=0.1)
+    export_stl(Pos(0, 0, BODY_T) * Rot(180, 0, 0) * part, str(stl_print),
+               tolerance=0.01, angular_tolerance=0.1)
     for k, v in checks(info, stl, stl_print).items():
-        print(f"{k:40s} {v}")
+        print(f"{k:42s} {v}")
     for n in info["notes"]:
         print("NOTE", n)
