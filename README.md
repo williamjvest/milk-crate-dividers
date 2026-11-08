@@ -2,9 +2,11 @@
 
 3D-printed clips that hold 1/4" plywood dividers in Juggernaut 24 quart milk crates. Each divider gets two **wall clips**, one on each side wall, and one **floor insert**. Everything plugs into the crate's own holes, so there's no glue and no drilling, and the crates still stack.
 
-| Wall clip | Floor insert |
+![A divider in a Juggernaut 24 qt crate](images/crate-angle.jpg)
+
+| | |
 |---|---|
-| ![Wall clip holding a board](images/wall-clip-in-use.jpg) | ![Floor insert holding a board](images/floor-insert-in-use.jpg) |
+| ![The crate from the side, divider in place](images/crate-side.jpg) | ![The crate from above: the board spans side wall to side wall](images/crate-top.jpg) |
 
 ## What you need
 
@@ -34,6 +36,10 @@ The files in [`stl/`](stl) are already oriented: channel face down, plug up. The
 - Six walls or 100% infill makes them stiff. Ours are printed in PLA and PLA-CF on an Elegoo Centauri Carbon.
 
 ## How it fits
+
+| Wall clip | Floor insert |
+|---|---|
+| ![Wall clip holding a board](images/wall-clip-in-use.jpg) | ![Floor insert holding a board](images/floor-insert-in-use.jpg) |
 
 | | Wall clip | Floor insert |
 |---|---|---|
