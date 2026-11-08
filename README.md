@@ -25,12 +25,16 @@ Each board spans the crate's width, side wall to side wall, and splits it front 
 
 ## Printing
 
-The files in [`stl/`](stl) are already oriented: channel face down, plug up. They need no supports.
+Every print file is already oriented: channel face down, plug up. They need no supports.
 
-| Part | File | Each (0.4 nozzle, 0.2 mm, PLA) |
-|---|---|---|
-| Wall clip | [`stl/wall-clip.stl`](stl/wall-clip.stl) | ~33 min, 12 g |
-| Floor insert | [`stl/floor-insert.stl`](stl/floor-insert.stl) | ~30 min, 11 g |
+- **3MF** is the one to use. It records units, so every slicer reads it at the right size (Orca, Bambu Studio, PrusaSlicer, Elegoo, Cura).
+- **STL** works anywhere.
+- **STEP**, in [`step/`](step), is for opening the parts in CAD.
+
+| Part | 3MF | STL | Each (0.4 nozzle, 0.2 mm, PLA) |
+|---|---|---|---|
+| Wall clip | [`3mf/wall-clip.3mf`](3mf/wall-clip.3mf) | [`stl/wall-clip.stl`](stl/wall-clip.stl) | ~33 min, 12 g |
+| Floor insert | [`3mf/floor-insert.3mf`](3mf/floor-insert.3mf) | [`stl/floor-insert.stl`](stl/floor-insert.stl) | ~30 min, 11 g |
 
 - Print both as-is. Each part's two small "ears" carry the plug square up through the body, so nothing prints over air. The only bridge is the channel ceiling, 5.9 mm across.
 - Six walls or 100% infill makes them stiff. Ours are printed in PLA and PLA-CF on an Elegoo Centauri Carbon.
@@ -65,12 +69,10 @@ The files in [`stl/`](stl) are already oriented: channel face down, plug up. The
 ```bash
 pip install -r cad/requirements.txt
 cd cad
-python crate_wall_clip.py      # writes crate-wall-clip.step / .stl / _print.stl
-python crate_floor_insert.py   # writes crate-floor-insert.step / .stl / _print.stl
+python crate_wall_clip.py      # writes crate-wall-clip.step / .stl / _print.stl / _print.3mf
+python crate_floor_insert.py   # writes crate-floor-insert.step / .stl / _print.stl / _print.3mf
 python cut_plan.py ../images/cut-plan.png
 ```
-
-STEP files for other CAD tools are in [`step/`](step).
 
 ## Credits and license
 

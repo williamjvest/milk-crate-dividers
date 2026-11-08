@@ -2,3 +2,4 @@ __pycache__/
 cad/*.stl
 cad/*.step
 .DS_Store
+cad/*.3mf

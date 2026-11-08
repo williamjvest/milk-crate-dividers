@@ -22,7 +22,7 @@ Run: ~/.venvs/cad/bin/python crate_wall_clip.py
 """
 import math
 from pathlib import Path
-from build123d import Axis, Box, Pos, Rot, chamfer, export_step, export_stl
+from build123d import Axis, Box, Mesher, Pos, Rot, Unit, chamfer, export_step, export_stl
 
 HERE = Path(__file__).resolve().parent
 NAME = "crate-wall-clip"
@@ -97,6 +97,9 @@ if __name__ == "__main__":
     export_stl(part, str(stl), tolerance=0.01, angular_tolerance=0.1)
     export_stl(Pos(0, 0, BODY_T) * Rot(180, 0, 0) * part, str(stl_print),
                tolerance=0.01, angular_tolerance=0.1)
+    mesher = Mesher(unit=Unit.MM)               # 3MF: carries units, so slicers can't misread the scale
+    mesher.add_shape(Pos(0, 0, BODY_T) * Rot(180, 0, 0) * part, linear_deflection=0.01, angular_deflection=0.1)
+    mesher.write(str(HERE / f"{NAME}_print.3mf"))
     for k, v in checks(info, stl, stl_print).items():
         print(f"{k:42s} {v}")
     for n in info["notes"]:
