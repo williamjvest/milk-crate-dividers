@@ -11,7 +11,7 @@ the original cross, because only one channel is ever used and the second arm was
     bigger plug those "ears" stick out 8 mm past the arm.
   - The plug is square, so the clip goes in with the channel vertical (dividers) or turned 90 deg
     (shelves).
-The cross-channel version it replaces is in this repo's history (commit a304c20).
+The cross-channel version it replaces is in this repo's history (commit 3f11049).
 
 Frames: CAD frame = use frame. z = 0 on the crate wall (the body's back face), z up into the crate,
 channel along x, plug below z = 0. Print orientation: channel face down on the bed, plug up
