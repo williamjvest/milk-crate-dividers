@@ -37,6 +37,7 @@ Every print file is already oriented: channel face down, plug up. They need no s
 | Floor insert | [`3mf/floor-insert.3mf`](3mf/floor-insert.3mf) | [`stl/floor-insert.stl`](stl/floor-insert.stl) | ~30 min, 11 g |
 
 - Print both as-is. Each part's two small "ears" carry the plug square up through the body, so nothing prints over air. The only bridge is the channel ceiling, 5.9 mm across.
+- Print one of each and test-fit it in your crate before running a full plate. Crates and filaments vary.
 - Six walls or 100% infill makes them stiff. Ours are printed in PLA and PLA-CF on an Elegoo Centauri Carbon.
 
 ## How it fits
